@@ -1,0 +1,125 @@
+import 'package:chatapp/constants/constants.dart';
+import 'package:chatapp/helper/helper.dart';
+import 'package:chatapp/shared_widgets/custom_submit.dart';
+import 'package:chatapp/shared_widgets/custom_title.dart';
+import 'package:chatapp/shared_widgets/custom_text_form_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+
+class LoginPage extends StatefulWidget {
+  LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  bool isLoading = false; //to show loading indicator if network was slow
+
+  String? email, password; // to accept email and pass from user and create an account
+
+  GlobalKey<FormState> formKey = GlobalKey(); //to use Form() widget and validate TextFormField()
+
+  @override
+  Widget build(BuildContext context) {
+    return ModalProgressHUD(
+      //ModalProgressHUD >>- packdge to show loading indicator
+      inAsyncCall: isLoading, // required with ModalProgressHUD
+      child: Scaffold(
+        backgroundColor: Color.fromARGB(255, 4, 24, 40),
+        body: Form(
+          key: formKey, //required with Form()
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: ListView(children: [
+              SizedBox(
+                height: 80,
+              ),
+              Center(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(50),
+                  child: Image.asset(kLogo),
+                ),
+              ),
+              Center(
+                child: Text(
+                  'Scholar Chat',
+                  style: TextStyle(
+                    color: Color.fromARGB(236, 176, 203, 216),
+                    fontSize: 24,
+                    fontFamily: 'Pacifico-Regular',
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              TitleWidget(title: 'Login'),
+              CustomTextFormField(
+                obscureText: false,
+                hint: 'Enter your Email',
+                onChanged: (data) {
+                  email = data;
+                },
+              ),
+              CustomTextFormField(
+                obscureText: true,
+                hint: 'Enter your Password',
+                onChanged: (data) {
+                  password = data;
+                },
+              ),
+              CustomSubmit(
+                  text: '  Sign in',
+                  onTap: () async {
+                    if (formKey.currentState!.validate()) {
+                      isLoading = true;
+                      setState(() {});
+                      try {
+                        await userLogin();
+
+                        showSnackBar(context, 'Successfully logined ✔️');
+                        Navigator.pushNamed(context, 'ChatPage',arguments: email);
+                      } on FirebaseAuthException catch (e) {
+                        if (e.code == 'email-not-found')
+                          showSnackBar(
+                              context, 'No email found for that email.');
+                        else if (e.code == 'wrong-password')
+                          showSnackBar(context,
+                              'Wrong password provided for that email.');
+                      } catch (e) {
+                        showSnackBar(context, 'Error, please try again.');
+                      }
+                      isLoading = false;
+                      setState(() {});
+                    }
+                  }),
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Text(
+                  'don\'t have an account?  ',
+                  style: TextStyle(color: Colors.white),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, 'RegisterPage');
+                  },
+                  child: Text(
+                    'Sign Up',
+                    style: TextStyle(color: Color(0xFF2196F3)),
+                  ),
+                )
+              ]),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> userLogin() async {
+    final auth = FirebaseAuth.instance;
+    UserCredential credential = await auth.signInWithEmailAndPassword(
+        email: email!, password: password!);
+  }
+}
