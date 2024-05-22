@@ -5,9 +5,11 @@ import 'package:chatapp/helper/helper.dart';
 import 'package:chatapp/shared_widgets/custom_submit.dart';
 import 'package:chatapp/shared_widgets/custom_title.dart';
 import 'package:chatapp/shared_widgets/custom_text_form_field.dart';
+import 'package:chatapp/views/chat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
+import 'package:page_transition/page_transition.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({super.key});
@@ -33,8 +35,17 @@ class _LoginPageState extends State<LoginPage> {
           isLoading = true;
         } else if (state is LoginSuccessState) {
           isLoading = false;
+
+          Navigator.push(
+            context,
+            PageTransition(
+                curve: Curves.bounceIn,
+                type: PageTransitionType.leftToRightWithFade,
+                child: ChatPage(),
+                duration: Duration(milliseconds: 800)),
+          );
+          Duration(seconds: 5);
           showSnackBar(context, 'Successfully logined ✔️');
-          Navigator.pushNamed(context, 'ChatPage', arguments: email);
         } else if (state is LoginFailureState) {
           isLoading = false;
           showSnackBar(context, state.errorMassage!);
