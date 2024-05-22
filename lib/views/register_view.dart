@@ -105,7 +105,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     CustomSubmit(
                         text: '  Register',
                         onTap: () async {
-                          if (formKey.currentState!.validate()) {}
+                          if (formKey.currentState!.validate()) {
+                            BlocProvider.of<UserRegisterCubit>(context)
+                                .userRigester(
+                                    email: email!,
+                                    password: password!,
+                                    rewritePassword: rewritePass!);
+                          }
                         }),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
