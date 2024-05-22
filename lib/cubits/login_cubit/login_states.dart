@@ -5,4 +5,8 @@ class LoginLoadingState extends UserLoginState{}
 
 class LoginSuccessState extends UserLoginState{}
 
-class LoginErrorState extends UserLoginState{}
+class LoginFailureState extends UserLoginState{
+  String? errorMassage;
+
+  LoginFailureState({this.errorMassage});
+}
