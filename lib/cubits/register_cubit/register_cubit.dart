@@ -29,9 +29,10 @@ class UserRegisterCubit extends Cubit<RegisterState> {
             errorMassage: 'The account already exists for that email.'));
       else
         emit(RegisterFailureState(
-            errorMassage: 'an error occured ' + e.toString()));
+            errorMassage: 'an error occured: ' + e.code.toString()));
     } catch (e) {
-      emit(RegisterFailureState(errorMassage: e.toString()));
+      emit(RegisterFailureState(
+          errorMassage: 'an error occured: ' + e.toString()));
     }
   }
 }
