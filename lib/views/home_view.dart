@@ -93,7 +93,8 @@ class _LoginPageState extends State<LoginPage> {
                       text: '  Sign in',
                       onTap: () async {
                         if (formKey.currentState!.validate()) {
-                          
+                          BlocProvider.of<UserLoginCubit>(context)
+                              .userLogin(email!, password!);
                         }
                       }),
                   Row(mainAxisAlignment: MainAxisAlignment.center, children: [
