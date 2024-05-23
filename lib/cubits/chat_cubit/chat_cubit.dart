@@ -17,4 +17,12 @@ class ChatCubit extends Cubit<ChatState> {
       kMessageId: email,
     });
   }
+
+  void getMessage() {
+    messages
+        .orderBy(kMessageTime, descending: true)
+        .snapshots()
+        .listen((event) {});
+    emit(ChatSuccessState());
+  }
 }
