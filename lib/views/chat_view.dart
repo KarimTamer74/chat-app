@@ -1,10 +1,8 @@
-import 'package:chatapp/constants/constants.dart';
 import 'package:chatapp/cubits/chat_cubit/chat_cubit.dart';
 import 'package:chatapp/cubits/chat_cubit/chat_state.dart';
-import 'package:chatapp/models/message.dart';
+import 'package:chatapp/helper/helper.dart';
 import 'package:chatapp/shared_widgets/chat_bubble.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatPage extends StatelessWidget {
@@ -51,6 +49,9 @@ class ChatPage extends StatelessWidget {
                     duration: const Duration(microseconds: 500),
                     curve: Curves.easeIn);
               }
+              if (state is ChatFailureState) {
+                showSnackBar(context, state.errorMessage);
+              }
             },
             builder: (context, state) {
               return Expanded(
@@ -77,17 +78,22 @@ class ChatPage extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.all(12.0),
-            child: TextField(
-              onSubmitted: (value) {
+            child: TextFormField(
+              onFieldSubmitted: (value) {
                 BlocProvider.of<ChatCubit>(context).sendMessage(
-                    message: value, email: email!, messageTime: formattedTime);
+                    message: value, email: email, messageTime: formattedTime);
               },
               decoration: InputDecoration(
                 hintText: 'Enter your message',
                 border:
                     OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 suffixIcon: IconButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      BlocProvider.of<ChatCubit>(context).sendMessage(
+                          message: controller.text,
+                          email: email,
+                          messageTime: formattedTime);
+                    },
                     icon: const Icon(
                       Icons.send,
                       color: Color(0xff006389),
