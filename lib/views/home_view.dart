@@ -1,10 +1,11 @@
 import 'package:chatapp/constants/constants.dart';
+import 'package:chatapp/cubits/chat_cubit/chat_cubit.dart';
 import 'package:chatapp/cubits/login_cubit/login_cubit.dart';
 import 'package:chatapp/cubits/login_cubit/login_states.dart';
 import 'package:chatapp/helper/helper.dart';
 import 'package:chatapp/shared_widgets/custom_submit.dart';
-import 'package:chatapp/shared_widgets/custom_title.dart';
 import 'package:chatapp/shared_widgets/custom_text_form_field.dart';
+import 'package:chatapp/shared_widgets/custom_title.dart';
 import 'package:chatapp/views/chat_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
           isLoading = true;
         } else if (state is LoginSuccessState) {
           isLoading = false;
-
+          BlocProvider.of<ChatCubit>(context).getMessage();
           Navigator.push(
             context,
             PageTransition(
