@@ -42,7 +42,16 @@ class ChatPage extends StatelessWidget {
       body: Column(
         children: [
           BlocConsumer<ChatCubit, ChatState>(
-            listener: (context, state) {},
+            listener: (context, state) {
+              if (state is ChatSuccessState) {
+                messagesList = state.messagesList;
+                controller.clear();
+                scrollcontroller.animateTo(
+                    scrollcontroller.position.minScrollExtent,
+                    duration: const Duration(microseconds: 500),
+                    curve: Curves.easeIn);
+              }
+            },
             builder: (context, state) {
               return Expanded(
                 child: ListView.builder(
@@ -70,11 +79,8 @@ class ChatPage extends StatelessWidget {
             padding: const EdgeInsets.all(12.0),
             child: TextField(
               onSubmitted: (value) {
-                controller.clear();
-                scrollcontroller.animateTo(
-                    scrollcontroller.position.minScrollExtent,
-                    duration: const Duration(microseconds: 500),
-                    curve: Curves.easeIn);
+                BlocProvider.of<ChatCubit>(context).sendMessage(
+                    message: value, email: email!, messageTime: formattedTime);
               },
               decoration: InputDecoration(
                 hintText: 'Enter your message',
