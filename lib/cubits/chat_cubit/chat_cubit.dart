@@ -3,6 +3,7 @@ import 'package:chatapp/cubits/chat_cubit/chat_state.dart';
 import 'package:chatapp/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+//kemo@gmail.com
 
 class ChatCubit extends Cubit<ChatState> {
   ChatCubit() : super(ChatInitialState());
@@ -10,13 +11,17 @@ class ChatCubit extends Cubit<ChatState> {
       FirebaseFirestore.instance.collection('messages');
   void sendMessage(
       {required String message,
-      required Object email,
+      required Object? email,
       required String messageTime}) {
-    messages.add({
-      kMessageTitle: message,
-      kMessageTime: messageTime,
-      kMessageId: email,
-    });
+    try {
+      messages.add({
+        kMessageTitle: message,
+        kMessageTime: messageTime,
+        kMessageId: email,
+      });
+    } catch (e) {
+      emit(ChatFailureState(e.toString()));
+    }
   }
 
   void getMessage() {
